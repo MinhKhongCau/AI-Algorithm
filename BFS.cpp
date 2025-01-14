@@ -30,10 +30,16 @@ vector<char> BFS(map<char, vector<char>> *map, char start, char target) {
 
         auto neighbor = map->find(state);
         for (char near: neighbor->second) {
+            /*
+                if find to target
+            */
             if (near == target) {
                 result.push_back(near);
                 return result;
             }
+            /*
+                if the value had been queue
+            */
             if (visited.find(near) == visited.end()) {
                 bfs_queue.push(near);
                 visited.insert(near);
