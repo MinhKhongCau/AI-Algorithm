@@ -1,3 +1,4 @@
+import heapq
 import json
 
 graph = {
@@ -23,35 +24,40 @@ graph = {
     'Neamt': [('Iasi', 87)]
 }
 
-def depth_limited_search(node, goal, limit, path, current_cost):
+def AStar(root, goal, heuristic, graph):
+    frontier = []
+    explored = []
 
-    path.append(node)
-    if (node == goal):
-        return path, current_cost
-    if (limit == 0):
-        return False, 0
-    
-    shortest_path = []
-    min_cost = 10000
-    for successor, cost in graph.get(node):
-        if (successor not in path):
+    heapq.heappush(frontier, (heuristic[root], root))
 
-            result, child_cost = depth_limited_search(successor, goal, limit-1, path.copy(), cost)
+    path = []
+    while (frontier.count != 0):
+        cost, current = heapq.heappop(frontier)
 
-            if result == False:
-                shortest_path = False
-                continue
-            else:
-                if (current_cost + child_cost < min_cost):
-                    min_cost = current_cost + child_cost
-                    shortest_path = result
-    return shortest_path, min_cost
+        path.append(current)
+        if (current == goal):
+            return path
+        
+        explored.append(current)
 
-# Searching with deep limited search
+        print("Cost for this node: ",cost)
+        for neighbor, nexCost in graph[current]:
+            if (neighbor not in explored):
+                heapq.heappush(frontier, (nexCost+heuristic[neighbor], neighbor))
+
+    return None
+
+
+heuristic = {
+    'Arad': 366, 'Zerind': 374, 'Oradea': 380, 'Timisoara': 329, 'Lugoj': 244,
+    'Mehadia': 241, 'Dobreta': 242, 'Craiova': 160, 'Sibiu': 253, 'Fagaras': 178,
+    'Rimnicu Vilcea': 193, 'Pitesti': 98, 'Bucharest': 0, 'Giurgiu': 77, 'Urziceni': 80,
+    'Hirsova': 151, 'Eforie': 161, 'Vaslui': 199, 'Iasi': 226, 'Neamt': 234
+}
+
 root = "Arad"
 goal = "Bucharest"
-depth_limit = 6
-path = []
-result, cost = depth_limited_search(root, goal, depth_limit, path, 0)
-print("Path shorted is: ", result)
-print("Min cost is: ", cost)
+
+path = AStar(root, goal, heuristic, graph)
+
+print("Best First Search with AStar Algorithm: ", path)

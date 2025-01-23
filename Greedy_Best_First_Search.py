@@ -1,3 +1,4 @@
+import heapq
 import json
 
 graph = {
@@ -23,35 +24,39 @@ graph = {
     'Neamt': [('Iasi', 87)]
 }
 
-def depth_limited_search(node, goal, limit, path, current_cost):
+def GreedyBestFirstSearch(root, goal, heuristic, graph):
 
-    path.append(node)
-    if (node == goal):
-        return path, current_cost
-    if (limit == 0):
-        return False, 0
-    
-    shortest_path = []
-    min_cost = 10000
-    for successor, cost in graph.get(node):
-        if (successor not in path):
+    frontier = []
+    heapq.heappush(frontier,(heuristic[root],root))
+    explored = []
 
-            result, child_cost = depth_limited_search(successor, goal, limit-1, path.copy(), cost)
+    explored.append(root)
 
-            if result == False:
-                shortest_path = False
-                continue
-            else:
-                if (current_cost + child_cost < min_cost):
-                    min_cost = current_cost + child_cost
-                    shortest_path = result
-    return shortest_path, min_cost
+    path = []
+    while (frontier.count != 0):
+        _, current = heapq.heappop(frontier)
 
-# Searching with deep limited search
+        path.append(current)
+        explored.append(current)  
+        if (current == goal):
+            return path
+        
+        for neighbor, _ in graph[current]:
+            if (neighbor not in explored):
+                heapq.heappush(frontier, (heuristic[neighbor], neighbor))
+        
+    return None
+
+heuristic = {
+    'Arad': 366, 'Zerind': 374, 'Oradea': 380, 'Timisoara': 329, 'Lugoj': 244,
+    'Mehadia': 241, 'Dobreta': 242, 'Craiova': 160, 'Sibiu': 253, 'Fagaras': 178,
+    'Rimnicu Vilcea': 193, 'Pitesti': 98, 'Bucharest': 0, 'Giurgiu': 77, 'Urziceni': 80,
+    'Hirsova': 151, 'Eforie': 161, 'Vaslui': 199, 'Iasi': 226, 'Neamt': 234
+}
+
 root = "Arad"
 goal = "Bucharest"
-depth_limit = 6
-path = []
-result, cost = depth_limited_search(root, goal, depth_limit, path, 0)
-print("Path shorted is: ", result)
-print("Min cost is: ", cost)
+
+path = GreedyBestFirstSearch(root, goal, heuristic, graph)
+
+print("Path shortest by GBFS: ", path)

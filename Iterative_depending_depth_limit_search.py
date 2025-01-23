@@ -47,11 +47,19 @@ def depth_limited_search(node, goal, limit, path, current_cost):
                     shortest_path = result
     return shortest_path, min_cost
 
+def Iterative_depending_deep_limited_search(node, problem):
+    for i in range(1000):
+        result, cost = depth_limited_search(node,problem, i, [], 0)
+
+        if (result == False):
+            continue
+        else:
+            return result, cost, i
+
 # Searching with deep limited search
 root = "Arad"
 goal = "Bucharest"
-depth_limit = 6
-path = []
-result, cost = depth_limited_search(root, goal, depth_limit, path, 0)
+result, cost, limit = Iterative_depending_deep_limited_search(root, goal)
 print("Path shorted is: ", result)
 print("Min cost is: ", cost)
+print("Limit is: ",limit)
